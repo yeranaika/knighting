@@ -1,0 +1,21 @@
+#BlueJ class context
+comment0.target=Player
+comment1.params=
+comment1.target=Player()
+comment2.params=sheet\ numFrames\ frameAncho\ frameAlto
+comment2.target=greenfoot.GreenfootImage[]\ cargarFramesDesdeSpriteSheet(greenfoot.GreenfootImage,\ int,\ int,\ int)
+comment3.params=mov
+comment3.target=void\ animar(int)
+comment4.params=mov
+comment4.target=void\ animarEstatico(int)
+comment5.params=
+comment5.target=void\ mover()
+comment6.params=
+comment6.target=int\ movimientoPlayer()
+comment7.params=
+comment7.target=boolean\ enElSuelo()
+comment8.params=
+comment8.target=boolean\ sobrePlataforma()
+comment9.params=
+comment9.target=void\ act()
+numComments=10
