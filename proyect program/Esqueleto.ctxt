@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=Esqueleto
+comment1.params=
+comment1.target=Esqueleto()
+comment2.params=
+comment2.target=void\ act()
+comment3.params=
+comment3.target=void\ moverEnemigo()
+comment4.params=frames\ velocidadAnimacion
+comment4.target=void\ animarEsqueleto(greenfoot.GreenfootImage[],\ int)
+comment5.params=sheet\ numFrames\ frameAncho\ frameAlto
+comment5.target=greenfoot.GreenfootImage[]\ cargarFramesDesdeSpriteSheet(greenfoot.GreenfootImage,\ int,\ int,\ int)
+numComments=6

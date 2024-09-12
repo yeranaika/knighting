@@ -29,5 +29,11 @@ public class Fase1 extends World
         // Crear y agregar el jugador
         Player player = new Player();
         addObject(player, 400, 250);  // Ajusta la posición inicial del jugador
+        
+        Esqueleto esqueleto = new Esqueleto();
+        addObject(esqueleto, 1000, 245);  // Ajusta la posición inicial del enemigo
+        
+        Esqueleto esqueleto2 = new Esqueleto();
+        addObject(esqueleto2, 600, 245);  // Ajusta la posición inicial del enemigo
     }
 }

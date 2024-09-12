@@ -12,7 +12,7 @@ public class Plataforma extends Actor {
         imagenPlataforma.fillRect(0, 0, ancho, alto);
         
         // Ajustar la transparencia de la plataforma (0 es completamente transparente, 255 es opaco)
-        imagenPlataforma.setTransparency(0);  // Ajusta el nivel de transparencia (por ejemplo, 128 es semi-transparente)
+        //imagenPlataforma.setTransparency(0);  // Ajusta el nivel de transparencia (por ejemplo, 128 es semi-transparente)
         
         // Asignar la imagen de la plataforma
         setImage(imagenPlataforma);
