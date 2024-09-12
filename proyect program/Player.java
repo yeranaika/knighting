@@ -1,44 +1,50 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-import greenfoot.GreenfootImage;
-
-public class Player extends Actor
-{
-    // Constantes de movimiento
-    public static final int MOV_ARRIBA = -1;
-    public static final int MOV_IZQUIERDA = -2;
-    public static final int MOV_DERECHA = 2;
-    public static final int NO_MOV = 0;
-    public static final int AGACHARSE = -3;
-
-    private int Movimientoanterior = NO_MOV;
-
-    // Valores de salto
-    private int velocidadY = 0;
-    private final int GRAVEDAD = 1;
-    private final int FUERZA_SALTO = -15;
-    private final int VELOCIDAD_MAXIMA_CAIDA = 10;
-
-    // Variables de animación
-    private int frameActual = 0;
-    private int frameContador = 0;
+    import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+    import greenfoot.GreenfootImage;
     
-    // Velocidades de animación para cada set
-    private int velocidadAnimCorrerDerecha = 5; // Velocidad de correr hacia la derecha
-    private int velocidadAnimCorrerIzquierda = 5; // Velocidad de correr hacia la izquierda
-    private int velocidadAnimEstaticoDerecha = 10; // Velocidad de animación estática derecha
-    private int velocidadAnimEstaticoIzquierda = 10; // Velocidad de animación estática izquierda
+    public class Player extends Actor{
+        // Constantes de movimiento
+        public static final int MOV_ARRIBA = -1;
+        public static final int MOV_IZQUIERDA = -2;
+        public static final int MOV_DERECHA = 2;
+        public static final int AGACHARSE = -3;
     
-    private int velocidadAnimJump = 8;
-
-
-    // Arrays para diferentes sets de animación
-    private GreenfootImage[] framesCorrerDerecha;
-    private GreenfootImage[] framesCorrerIzquierda;
-    private GreenfootImage[] framesEstaticoDerecha;
-    private GreenfootImage[] framesEstaticoIzquierda;
+        private int Movimientoanterior = NO_MOV;
+        
+        //valores de estados
+        public static final int NO_MOV = 0;
+        
+        public boolean enElAire = false;
+        public boolean enReposo = false;
+        
     
-    private GreenfootImage[] framesJump;
-
+        // Valores de salto
+        private int velocidadY = 0;
+        private final int GRAVEDAD = 1;
+        private final int FUERZA_SALTO = -15;
+        private final int VELOCIDAD_MAXIMA_CAIDA = 10;
+    
+        // Variables de animación
+        private int frameActual = 0;
+        private int frameContador = 0;
+        
+        // Velocidades de animación para cada set
+        private int velocidadAnimCorrerDerecha = 5; // Velocidad de correr hacia la derecha
+        private int velocidadAnimCorrerIzquierda = 5; // Velocidad de correr hacia la izquierda
+        private int velocidadAnimEstaticoDerecha = 10; // Velocidad de animación estática derecha
+        private int velocidadAnimEstaticoIzquierda = 10; // Velocidad de animación estática izquierda
+        
+        private int velocidadAnimJump = 4;
+    
+    
+        // Arrays para diferentes sets de animación
+        private GreenfootImage[] framesCorrerDerecha;
+        private GreenfootImage[] framesCorrerIzquierda;
+        private GreenfootImage[] framesEstaticoDerecha;
+        private GreenfootImage[] framesEstaticoIzquierda;
+        
+        private GreenfootImage[] framesJumpDerecha;
+        private GreenfootImage[] framesJumpIzquierda;
+        
     public Player()
     {
         // Cargar los sprite sheets
@@ -47,14 +53,19 @@ public class Player extends Actor
         GreenfootImage spriteSheetEstaticoDerecha = new GreenfootImage("player_estatico_derecha.png");
         GreenfootImage spriteSheetEstaticoIzquierda = new GreenfootImage("player_estatico_izquierda.png");
         
-        GreenfootImage spriteSheetJump = new GreenfootImage("player_jump.png");
+        GreenfootImage spriteSheetJumpDerecha = new GreenfootImage("player_jump_derecha.png");
+        GreenfootImage spriteSheetJumpIzquierda = new GreenfootImage("player_jump_izquierda.png");
         
         // Inicializar animaciones usando el método genérico
         framesCorrerDerecha = cargarFramesDesdeSpriteSheet(spriteSheetCorrerDerecha, 9, 80, 80);
         framesCorrerIzquierda = cargarFramesDesdeSpriteSheet(spriteSheetCorrerIzquierda, 9, 80, 80);
+        
         framesEstaticoDerecha = cargarFramesDesdeSpriteSheet(spriteSheetEstaticoDerecha, 9, 80, 80);
         framesEstaticoIzquierda = cargarFramesDesdeSpriteSheet(spriteSheetEstaticoIzquierda, 9, 80, 80);
-        framesJump = cargarFramesDesdeSpriteSheet(spriteSheetJump, 3, 80, 80);
+        
+        framesJumpDerecha = cargarFramesDesdeSpriteSheet(spriteSheetJumpDerecha, 3, 80, 80);
+        framesJumpIzquierda = cargarFramesDesdeSpriteSheet(spriteSheetJumpIzquierda, 3, 80, 80);
+
         
         setImage(framesEstaticoDerecha[0]);
     }
@@ -85,52 +96,67 @@ public class Player extends Actor
         }
     }
 
-
-    public void mover() {
-        int mov = movimientoPlayer(); // Obtener el valor de movimiento
     
-        if (mov == MOV_IZQUIERDA) {
-            setLocation(getX() - 4, getY());  // Aumentamos la velocidad para moverse más rápido
-            animarUniversal(framesCorrerIzquierda, velocidadAnimCorrerIzquierda); // Animación para correr a la izquierda
-        } else if (mov == MOV_DERECHA) {
-            setLocation(getX() + 4, getY());  // Aumentamos la velocidad para moverse más rápido
-            animarUniversal(framesCorrerDerecha, velocidadAnimCorrerDerecha); // Animación para correr a la derecha
-        }
+        public void mover() {
+        int mov = movimientoPlayer(); // Obtener el valor de movimiento
     
         // Saltar solo si está en el suelo o sobre una plataforma
         if (mov == MOV_ARRIBA && (enElSuelo() || sobrePlataforma())) {
             velocidadY = FUERZA_SALTO;
+            enElAire = true;  // El personaje está en el aire
         }
     
-        // Aplicar la gravedad
-        velocidadY += GRAVEDAD;
-        if (velocidadY > VELOCIDAD_MAXIMA_CAIDA) {
-            velocidadY = VELOCIDAD_MAXIMA_CAIDA;
-        }
+        // Aplicar la gravedad si estamos en el aire
+        if (enElAire) {
+            velocidadY += GRAVEDAD;
+            if (velocidadY > VELOCIDAD_MAXIMA_CAIDA) {
+                velocidadY = VELOCIDAD_MAXIMA_CAIDA;
+            }
+            setLocation(getX(), getY() + velocidadY);
     
-        // Actualizar la posición vertical
-        setLocation(getX(), getY() + velocidadY);
+            // Asegurar que siempre se muestre la animación de salto mientras el personaje esté en el aire
+            if (Movimientoanterior == MOV_IZQUIERDA || mov == MOV_IZQUIERDA) {
+                animarUniversal(framesJumpIzquierda, velocidadAnimJump);
+            } else if (Movimientoanterior == MOV_DERECHA || mov == MOV_DERECHA) {
+                animarUniversal(framesJumpDerecha, velocidadAnimJump);
+            }
     
-        // Si el jugador está en el aire (ni en el suelo ni sobre una plataforma), animar el salto
-        if (!enElSuelo() && !sobrePlataforma()) {
-            animarUniversal(framesJump, velocidadAnimJump);
-        } else if (mov == NO_MOV) {
-            // Si el jugador ha terminado el salto, regresa a la animación estática
-            if (Movimientoanterior == MOV_IZQUIERDA) {
-                animarUniversal(framesEstaticoIzquierda, velocidadAnimEstaticoIzquierda); // Animación estática izquierda
-            } else if (Movimientoanterior == MOV_DERECHA) {
-                animarUniversal(framesEstaticoDerecha, velocidadAnimEstaticoDerecha); // Animación estática derecha
+            // Permitir movimiento horizontal en el aire, pero no cambiar la animación de salto
+            if (mov == MOV_IZQUIERDA) {
+                setLocation(getX() - 4, getY());  // Moverse a la izquierda en el aire
+            } else if (mov == MOV_DERECHA) {
+                setLocation(getX() + 4, getY());  // Moverse a la derecha en el aire
             }
         }
     
-        // Si el jugador está en el suelo o sobre una plataforma, se detiene la caída
+        // Si el jugador toca el suelo o una plataforma
         if (enElSuelo() || sobrePlataforma()) {
             velocidadY = 0;
+            enElAire = false;  // El personaje ya no está en el aire
+    
+            // Si no se está moviendo, mostrar la animación estática
+            if (mov == NO_MOV) {
+                if (Movimientoanterior == MOV_IZQUIERDA) {
+                    animarUniversal(framesEstaticoIzquierda, velocidadAnimEstaticoIzquierda);
+                } else if (Movimientoanterior == MOV_DERECHA) {
+                    animarUniversal(framesEstaticoDerecha, velocidadAnimEstaticoDerecha);
+                }
+            } else {
+                // Si el jugador se mueve horizontalmente en el suelo
+                if (mov == MOV_IZQUIERDA) {
+                    setLocation(getX() - 4, getY());
+                    animarUniversal(framesCorrerIzquierda, velocidadAnimCorrerIzquierda);
+                } else if (mov == MOV_DERECHA) {
+                    setLocation(getX() + 4, getY());
+                    animarUniversal(framesCorrerDerecha, velocidadAnimCorrerDerecha);
+                }
+            }
         }
     }
 
-
-
+        
+        
+        
     public int movimientoPlayer() {
         if (Greenfoot.isKeyDown("w")) {
             if (enElSuelo() || sobrePlataforma()) {
