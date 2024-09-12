@@ -1,5 +1,5 @@
 #BlueJ class context
 comment0.target=Plataforma
-comment1.params=
-comment1.target=Plataforma()
+comment1.params=ancho\ alto\ color
+comment1.target=Plataforma(int,\ int,\ greenfoot.Color)
 numComments=2
