@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=Entidad
+comment1.params=vidaInicial
+comment1.target=Entidad(int)
+comment10.params=
+comment10.target=void\ morir()
+comment2.params=sheet\ numFrames\ frameAncho\ frameAlto
+comment2.target=greenfoot.GreenfootImage[]\ cargarFramesDesdeSpriteSheet(greenfoot.GreenfootImage,\ int,\ int,\ int)
+comment3.params=frames\ velocidadAnimacion
+comment3.target=void\ animarUniversal(greenfoot.GreenfootImage[],\ int)
+comment4.params=
+comment4.target=boolean\ enElSuelo()
+comment5.params=
+comment5.target=boolean\ sobrePlataforma()
+comment6.params=
+comment6.target=void\ aplicarGravedad()
+comment7.params=
+comment7.target=void\ mostrarHitbox()
+comment8.params=claseEnemigo\ da\u00F1o
+comment8.target=void\ detectarColisiones(java.lang.Class,\ int)
+comment9.params=cantidad
+comment9.target=void\ recibirDa\u00F1o(int)
+numComments=11
