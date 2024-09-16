@@ -1,7 +1,8 @@
 import greenfoot.GreenfootImage;
 import greenfoot.Greenfoot;
-import greenfoot.Actor;
 import greenfoot.Color;
+import greenfoot.Actor;
+import greenfoot.World;
 
 public class Player extends Entidad {
     // Constantes de movimiento
@@ -12,7 +13,7 @@ public class Player extends Entidad {
     private int Movimientoanterior = NO_MOV;
     public static final int NO_MOV = 0;
 
-    // Estados del player
+    // Estados del jugador
     private boolean enAtaque = false;
     public boolean enElAire = false;
     private boolean enSalto = false;
@@ -33,7 +34,7 @@ public class Player extends Entidad {
     private final int VELOCIDAD_MAXIMA_CAIDA = 10;
     private boolean puedeBajar = false;
 
-    // Spritesheet para animaciones
+    // Spritesheets para animaciones
     private GreenfootImage[] framesCorrerDerecha;
     private GreenfootImage[] framesCorrerIzquierda;
     private GreenfootImage[] framesEstaticoDerecha;
@@ -42,6 +43,8 @@ public class Player extends Entidad {
     private GreenfootImage[] framesJumpIzquierda;
     private GreenfootImage[] framesAtaqueDerecha;
     private GreenfootImage[] framesAtaqueIzquierda;
+    private GreenfootImage[] framesMuerteDerecha;  // **Animación de muerte**
+    private GreenfootImage[] framesMuerteIzquierda;  // **Animación de muerte**
 
     // Hitbox de ataque
     private GreenfootImage hitboxAtaqueDerecha;
@@ -54,11 +57,12 @@ public class Player extends Entidad {
     private int velocidadAnimCorrerDerecha = 4;    
     private int velocidadAnimEstaticoIzquierda = 10;  
     private int velocidadAnimEstaticoDerecha = 10;
+    private int velocidadAnimMuerte = 8;  // **Velocidad de animación de muerte**
 
     public Player() {
-        super(200);  // Vida inicial
+        super(30);  // Vida inicial
 
-        // Cargar los sprite sheets
+        // Cargar los spritesheets
         GreenfootImage spriteSheetCorrerDerecha = new GreenfootImage("player_run_derecha.png");
         GreenfootImage spriteSheetCorrerIzquierda = new GreenfootImage("player_run_izquierda.png");
         GreenfootImage spriteSheetEstaticoDerecha = new GreenfootImage("player_estatico_derecha.png");
@@ -67,8 +71,10 @@ public class Player extends Entidad {
         GreenfootImage spriteSheetJumpIzquierda = new GreenfootImage("player_jump_izquierda.png");
         GreenfootImage spriteSheetAtaqueDerecha = new GreenfootImage("player_ataque_derecha.png");
         GreenfootImage spriteSheetAtaqueIzquierda = new GreenfootImage("player_ataque_izquierda.png");
+        GreenfootImage spriteSheetMuerteDerecha = new GreenfootImage("player_dead_derecha.png");  // **Spritesheet de muerte**
+        GreenfootImage spriteSheetMuerteIzquierda = new GreenfootImage("player_dead_izquierda.png");  // **Spritesheet de muerte**
 
-        // Cargar animaciones usando Entidad
+        // Cargar animaciones usando métodos de la clase Entidad
         framesCorrerDerecha = cargarFramesDesdeSpriteSheet(spriteSheetCorrerDerecha, 9, 80, 80);
         framesCorrerIzquierda = cargarFramesDesdeSpriteSheet(spriteSheetCorrerIzquierda, 9, 80, 80);
         framesEstaticoDerecha = cargarFramesDesdeSpriteSheet(spriteSheetEstaticoDerecha, 9, 80, 80);
@@ -77,18 +83,50 @@ public class Player extends Entidad {
         framesJumpIzquierda = cargarFramesDesdeSpriteSheet(spriteSheetJumpIzquierda, 3, 80, 80);
         framesAtaqueDerecha = cargarFramesDesdeSpriteSheet(spriteSheetAtaqueDerecha, 5, 80, 80);
         framesAtaqueIzquierda = cargarFramesDesdeSpriteSheet(spriteSheetAtaqueIzquierda, 5, 80, 80);
+        framesMuerteDerecha = cargarFramesDesdeSpriteSheet(spriteSheetMuerteDerecha, 10, 80, 80);  // **Cargar frames de muerte**
+        framesMuerteIzquierda = cargarFramesDesdeSpriteSheet(spriteSheetMuerteIzquierda, 10, 80, 80);  // **Cargar frames de muerte**
 
-        // Definir las hitboxes de ataque (una para cada dirección)
-        hitboxAtaqueDerecha = new GreenfootImage(40, 80);  // Ajustar tamaño de la hitbox de ataque
+        // Definir las hitboxes de ataque
+        hitboxAtaqueDerecha = new GreenfootImage(40, 80);
         hitboxAtaqueIzquierda = new GreenfootImage(40, 80);
 
-        hitboxAtaqueDerecha.setColor(new Color(0, 255, 0, 128));  // Hitbox en verde semi-transparente
-        hitboxAtaqueDerecha.fillRect(0, 0, 40, 80);  // Hitbox de ataque
+        hitboxAtaqueDerecha.setColor(new Color(0, 255, 0, 128));
+        hitboxAtaqueDerecha.fillRect(0, 0, 40, 80);
 
-        hitboxAtaqueIzquierda.setColor(new Color(0, 255, 0, 128));  // Hitbox en verde semi-transparente
-        hitboxAtaqueIzquierda.fillRect(0, 0, 40, 80);  // Hitbox de ataque
+        hitboxAtaqueIzquierda.setColor(new Color(0, 255, 0, 128));
+        hitboxAtaqueIzquierda.fillRect(0, 0, 40, 80);
 
         setImage(framesEstaticoDerecha[0]);
+    }
+
+    // Método actEntidad() donde se implementa la lógica del jugador
+    @Override
+    protected void actEntidad() {
+        if (enMuerte) {
+            animarMuerte();  // **Animar la muerte si está muriendo**
+            return;  // No realizar otras acciones
+        }
+
+        if (enAtaque) {
+            gestionarAtaque();  // Gestionar la animación de ataque si está atacando
+        } else {
+            mover();  // Mover solo si no está en ataque
+            //mostrarHitbox();  // Mostrar la hitbox de daño si es necesario
+        }
+    }
+
+    // **Método para animar la muerte**
+    @Override
+    protected void animarMuerte() {
+        if (Movimientoanterior == MOV_DERECHA || Movimientoanterior == NO_MOV) {
+            animarUniversal(framesMuerteDerecha, velocidadAnimMuerte);
+        } else {
+            animarUniversal(framesMuerteIzquierda, velocidadAnimMuerte);
+        }
+
+        if (frameActual >= framesMuerteDerecha.length || frameActual >= framesMuerteIzquierda.length) {
+            morir();  // Llamar al método morir al finalizar la animación
+        }
     }
 
     // Mostrar la hitbox de ataque durante el ataque
@@ -96,9 +134,9 @@ public class Player extends Entidad {
         GreenfootImage imagenActual = new GreenfootImage(getImage());
 
         if (Movimientoanterior == MOV_DERECHA) {
-            imagenActual.drawImage(hitboxAtaqueDerecha, getImage().getWidth(), 0);  // Colocar la hitbox a la derecha
+            imagenActual.drawImage(hitboxAtaqueDerecha, getImage().getWidth(), 0);
         } else {
-            imagenActual.drawImage(hitboxAtaqueIzquierda, -40, 0);  // Colocar la hitbox a la izquierda
+            imagenActual.drawImage(hitboxAtaqueIzquierda, -40, 0);
         }
         setImage(imagenActual);
     }
@@ -108,9 +146,9 @@ public class Player extends Entidad {
         Actor enemigo = null;
 
         if (Movimientoanterior == MOV_DERECHA) {
-            enemigo = getOneObjectAtOffset(40, 0, Esqueleto.class);  // Detectar colisión con la hitbox de ataque hacia la derecha
+            enemigo = getOneObjectAtOffset(40, 0, Esqueleto.class);
         } else if (Movimientoanterior == MOV_IZQUIERDA) {
-            enemigo = getOneObjectAtOffset(-40, 0, Esqueleto.class);  // Detectar colisión con la hitbox de ataque hacia la izquierda
+            enemigo = getOneObjectAtOffset(-40, 0, Esqueleto.class);
         }
 
         if (enemigo != null && enemigo instanceof Esqueleto) {
@@ -131,27 +169,25 @@ public class Player extends Entidad {
         }
 
         mostrarHitboxAtaque();  // Mostrar la hitbox de ataque durante la animación
-        detectarColisionAtaque();  // Detectar si se golpea a un enemigo con la hitbox de ataque
+        detectarColisionAtaque();  // Detectar colisiones con enemigos
     }
 
     // Gestionar la animación de ataque y su finalización
     public void gestionarAtaque() {
-        if (enAtaque) {
-            if (Movimientoanterior == MOV_IZQUIERDA) {
-                animarUniversal(framesAtaqueIzquierda, velocidadAnimAtaque);
-            } else {
-                animarUniversal(framesAtaqueDerecha, velocidadAnimAtaque);
-            }
+        if (Movimientoanterior == MOV_IZQUIERDA) {
+            animarUniversal(framesAtaqueIzquierda, velocidadAnimAtaque);
+        } else {
+            animarUniversal(framesAtaqueDerecha, velocidadAnimAtaque);
+        }
 
-            // Comprobar si la animación ha terminado
-            if (frameActual >= framesAtaqueDerecha.length || frameActual >= framesAtaqueIzquierda.length) {
-                enAtaque = false;  // Finalizar el estado de ataque
-                frameActual = 0;   // Reiniciar el contador de frames
-            }
+        // Comprobar si la animación ha terminado
+        if (frameActual >= framesAtaqueDerecha.length || frameActual >= framesAtaqueIzquierda.length) {
+            enAtaque = false;  // Finalizar el estado de ataque
+            frameActual = 0;   // Reiniciar el contador de frames
         }
     }
 
-    // Movimiento y control general del Player
+    // Movimiento y control general del jugador
     public void mover() {
         if (contadorAtaque > 0) contadorAtaque--;
         if (contadorSalto > 0) contadorSalto--;
@@ -222,7 +258,7 @@ public class Player extends Entidad {
             } else if (mov == NO_MOV) {
                 if (Movimientoanterior == MOV_IZQUIERDA) {
                     animarUniversal(framesEstaticoIzquierda, velocidadAnimEstaticoIzquierda);
-                } else if (Movimientoanterior == MOV_DERECHA) {
+                } else if (Movimientoanterior == MOV_DERECHA || Movimientoanterior == NO_MOV) {
                     animarUniversal(framesEstaticoDerecha, velocidadAnimEstaticoDerecha);
                 }
             }
@@ -247,15 +283,24 @@ public class Player extends Entidad {
         return NO_MOV;
     }
 
-    public void recibirDaño(int cantidad) {
-        vida -= cantidad;
-        if (vida <= 0) {
-            morir();
-        }
+    // **Método para obtener la vida (para el HUD)**
+    public int getVida() {
+        return vida;
     }
 
+    @Override
+    public void morir() {
+        World world = getWorld();
+        if (world instanceof Fase1) {
+            Fase1 fase1 = (Fase1) world;
+            fase1.mostrarGameOver();  // Mostrar el menú de Game Over
+        }
+        getWorld().removeObject(this);
+    }
+
+
     public boolean enElSuelo() {
-        return getY() >= getWorld().getHeight() - 50;
+    return getY() >= getWorld().getHeight() - 50;
     }
 
     public boolean sobrePlataforma() {
@@ -267,14 +312,5 @@ public class Player extends Entidad {
             return true;
         }
         return false;
-    }
-
-    public void act() {
-        if (enAtaque) {
-            gestionarAtaque();  // Gestionar la animación de ataque si está atacando
-        } else {
-            mover();  // Mover solo si no está en ataque
-            //mostrarHitbox();  //muestra la hitbox de daño
-        }
     }
 }

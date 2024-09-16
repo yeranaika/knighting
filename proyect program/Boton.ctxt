@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=Boton
+comment1.params=texto
+comment1.target=Boton(java.lang.String)
+comment2.params=
+comment2.target=void\ act()
+comment3.params=ancho\ alto\ texto\ tama\u00F1oTexto\ colorTexto\ colorFondo
+comment3.target=greenfoot.GreenfootImage\ crearImagenBoton(int,\ int,\ java.lang.String,\ int,\ greenfoot.Color,\ greenfoot.Color)
+numComments=4

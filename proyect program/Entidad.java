@@ -1,6 +1,6 @@
-import greenfoot.*;
+import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
-public class Entidad extends Actor {
+public abstract class Entidad extends Actor {
     protected int vida;  // Vida de la entidad
 
     // Variables de animación
@@ -14,6 +14,9 @@ public class Entidad extends Actor {
     protected int hitboxHeight = 50;
     protected GreenfootImage hitboxImage;
 
+    // Variable para el estado de muerte
+    protected boolean enMuerte = false;
+
     public Entidad(int vidaInicial) {
         vida = vidaInicial;
 
@@ -22,6 +25,19 @@ public class Entidad extends Actor {
         hitboxImage.setColor(new Color(0, 255, 0, 128));  // Verde semi-transparente para visualización
         hitboxImage.fillRect(0, 0, hitboxWidth, hitboxHeight);
     }
+
+    // Método act() que verifica la pausa y llama a actEntidad()
+    @Override
+    public void act() {
+        Fase1 mundo = (Fase1) getWorld();
+        if (mundo != null && mundo.isJuegoPausado() && !enMuerte) {
+            return;  // Si el juego está pausado y no está en muerte, no hacer nada
+        }
+        actEntidad();  // Llamar al método abstracto que implementarán las subclases
+    }
+
+    // Método abstracto que las subclases deben implementar
+    protected abstract void actEntidad();
 
     // Método genérico para cargar frames de un sprite sheet
     public GreenfootImage[] cargarFramesDesdeSpriteSheet(GreenfootImage sheet, int numFrames, int frameAncho, int frameAlto) {
@@ -88,14 +104,20 @@ public class Entidad extends Actor {
 
     // Recibir daño
     public void recibirDaño(int cantidad) {
+        if (enMuerte) return;  // Si ya está muriendo, no hacer nada
+
         vida -= cantidad;
         if (vida <= 0) {
-            morir();
+            enMuerte = true;
+            frameActual = 0;  // Reiniciar animación de muerte
         }
     }
 
-    // Método morir
+    // Método morir (puede ser sobrescrito por las subclases si es necesario)
     public void morir() {
         getWorld().removeObject(this);
     }
+
+    // Método abstracto para animar muerte
+    protected abstract void animarMuerte();
 }
