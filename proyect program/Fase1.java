@@ -4,6 +4,8 @@ public class Fase1 extends World {
     private boolean juegoPausado = false;  // Controla si el juego está pausado o no
     private MenuPausa menuPausa;  // Referencia al menú de pausa
     private MenuGameOver menuGameOver; // Referencia al menú de Game Over
+    private BarraDeVida barraDeVida;  // Instancia de la barra de vida
+    private Player player;  // Referencia al jugador
 
     public Fase1() {
         // Tamaño del mapa
@@ -39,8 +41,12 @@ public class Fase1 extends World {
         addObject(plataforma3, 890, 701);
 
         // Crear y agregar el jugador
-        Player player = new Player();
+        player = new Player();
         addObject(player, 400, 250);
+
+        // Crear y agregar la barra de vida
+        barraDeVida = new BarraDeVida(player);  // Pasar la referencia del jugador
+        addObject(barraDeVida, getWidth() - 150, 50);  // Posicionar la barra de vida en la esquina superior derecha
 
         // Agregar enemigos
         Esqueleto esqueleto = new Esqueleto(100, 200);
@@ -57,7 +63,11 @@ public class Fase1 extends World {
                 pausarJuego();
             }
         }
+    
+        // Actualizar la barra de vida del jugador
+        barraDeVida.actualizarBarra();  // Sin argumentos
     }
+
 
     // Método para pausar el juego
     private void pausarJuego() {

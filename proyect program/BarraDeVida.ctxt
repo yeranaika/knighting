@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=BarraDeVida
+comment1.params=player
+comment1.target=BarraDeVida(Player)
+comment2.params=
+comment2.target=void\ actualizarBarra()
+comment3.params=
+comment3.target=void\ mostrarCorazones()
+numComments=4

@@ -6,9 +6,9 @@ public class MenuPausa extends Actor {
 
     public MenuPausa() {
         // Crear un fondo semitransparente para el menú de pausa
-        GreenfootImage background = new GreenfootImage(400, 300);
+        GreenfootImage background = new GreenfootImage(400, 500);
         background.setColor(new Color(0, 0, 0, 150));  // Fondo negro semitransparente
-        background.fillRect(0, 0, 400, 300);
+        background.fillRect(0, 0, 400, 500);
         
         // Agregar el texto "PAUSA" en el centro
         GreenfootImage texto = new GreenfootImage("PAUSA", 36, Color.WHITE, new Color(0, 0, 0, 0));

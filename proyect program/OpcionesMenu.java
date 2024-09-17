@@ -7,7 +7,7 @@ public class OpcionesMenu extends World {
         
         // Agregar un botón de "Regresar"
         Boton regresarBoton = new Boton("Regresar");
-        addObject(regresarBoton, getWidth() / 2, 850);  // Colocar en la parte inferior
+        addObject(regresarBoton, getWidth() / 2, 750);  // Colocar en la parte inferior
     }
 
     // Método para verificar si el botón de regresar fue clickeado
