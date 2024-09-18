@@ -6,16 +6,16 @@ public class Plataforma extends Actor {
         GreenfootImage imagenPlataforma = new GreenfootImage(ancho, alto);
         
         // Establecer el color de la plataforma
-        //imagenPlataforma.setColor(color);
+        imagenPlataforma.setColor(color);
         
         // Dibujar el rectángulo de la plataforma
         imagenPlataforma.fillRect(0, 0, ancho, alto);
         
-        // Ajustar la transparencia de la plataforma (0 es completamente transparente, 255 es opaco)
-        imagenPlataforma.setTransparency(0);  // Ajusta el nivel de transparencia (por ejemplo, 128 es semi-transparente)
+        // Ajustar la transparencia de la plataforma (0 es completamente transparente
+        imagenPlataforma.setTransparency(0); 
         
         // Establecer el color del texto y el tamaño de la fuente
-        int tamañoTexto = 36;  // Tamaño del texto, puedes ajustar este valor para hacerlo más grande o más pequeño
+        int tamañoTexto = 36;  // Tamaño del texto
         GreenfootImage textoTemporal = new GreenfootImage("" + numero, tamañoTexto, Color.WHITE, new Color(0, 0, 0, 0));
         int textoAncho = textoTemporal.getWidth();
         int textoAlto = textoTemporal.getHeight();

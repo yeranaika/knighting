@@ -14,15 +14,15 @@ public class Esqueleto extends Entidad {
     private GreenfootImage[] framesMuerteDerecha;
     private GreenfootImage[] framesMuerteIzquierda;
 
-    private int rangoDeteccion = 200;  // Rango en el que el esqueleto detecta al jugador
-    private int distanciaAtaque = 50;  // Distancia mínima para que el esqueleto ataque
-    private int distanciaSegura = 45;  // Distancia mínima para que el esqueleto se detenga antes de atacar
+    private int rangoDeteccion = 200;  
+    private int distanciaAtaque = 50;  
+    private int distanciaSegura = 45;  
 
-    private int contadorAtaque = 0;  // Contador para gestionar el enfriamiento de ataques
-    private int cooldownAtaque = 50; // Tiempo de espera entre ataques
+    private int contadorAtaque = 0;  
+    private int cooldownAtaque = 50; 
 
-    private final int GRAVEDAD = 1;  // Gravedad que afecta al esqueleto
-    private final int VELOCIDAD_MAXIMA_CAIDA = 10;  // Velocidad máxima de caída
+    private final int GRAVEDAD = 1;  
+    private final int VELOCIDAD_MAXIMA_CAIDA = 10;  
 
     // Variables para patrullaje
     private int puntoInicialX;  // Punto de inicio del patrullaje
@@ -35,8 +35,7 @@ public class Esqueleto extends Entidad {
 
     // Constructor
     public Esqueleto(int puntoInicialX, int puntoFinalX) {
-        super(20);  // Vida inicial
-
+        super(20, puntoInicialX, puntoFinalX);  
         // Guardar los puntos de patrullaje
         this.puntoInicialX = puntoInicialX;
         this.puntoFinalX = puntoFinalX;
@@ -50,11 +49,11 @@ public class Esqueleto extends Entidad {
         GreenfootImage spriteSheetMuerteIzquierda = new GreenfootImage("esqueleto_muerte_izquierda.png");
 
         // Cargar frames de animación
-        framesEsqueletoDerecha = cargarFramesDesdeSpriteSheet(spriteSheetEsqueletoDerecha, 4, 80, 80); // Caminar tiene 4 frames
+        framesEsqueletoDerecha = cargarFramesDesdeSpriteSheet(spriteSheetEsqueletoDerecha, 4, 80, 80); 
         framesEsqueletoIzquierda = cargarFramesDesdeSpriteSheet(spriteSheetEsqueletoIzquierda, 4, 80, 80);
-        framesAtaqueDerecha = cargarFramesDesdeSpriteSheet(spriteSheetAtaqueDerecha, 8, 80, 80); // Ataque tiene 8 frames
+        framesAtaqueDerecha = cargarFramesDesdeSpriteSheet(spriteSheetAtaqueDerecha, 8, 80, 80); 
         framesAtaqueIzquierda = cargarFramesDesdeSpriteSheet(spriteSheetAtaqueIzquierda, 8, 80, 80);
-        framesMuerteDerecha = cargarFramesDesdeSpriteSheet(spriteSheetMuerteDerecha, 4, 80, 80); // Muerte tiene 4 frames
+        framesMuerteDerecha = cargarFramesDesdeSpriteSheet(spriteSheetMuerteDerecha, 4, 80, 80); 
         framesMuerteIzquierda = cargarFramesDesdeSpriteSheet(spriteSheetMuerteIzquierda, 4, 80, 80);
 
         setImage(framesEsqueletoDerecha[0]);
@@ -63,11 +62,11 @@ public class Esqueleto extends Entidad {
     @Override
     protected void actEntidad() {
         if (enMuerte) {
-            animarMuerte();  // Animar la muerte si está muriendo
+            animarMuerte();  
             return;
         }
 
-        if (contadorAtaque > 0) contadorAtaque--;  // Cooldown de ataque
+        if (contadorAtaque > 0) contadorAtaque--;  
 
         aplicarGravedad();  // Aplicar gravedad
 
@@ -87,29 +86,20 @@ public class Esqueleto extends Entidad {
         }
     }
 
-    // Resto de métodos sin cambios...
-
-    // Método para calcular la distancia al jugador
-    private int calcularDistanciaAlJugador(Player jugador) {
-        int dx = getX() - jugador.getX();
-        int dy = getY() - jugador.getY();
-        return (int) Math.sqrt(dx * dx + dy * dy);  // Distancia euclidiana
-    }
-
     // Método para que el Esqueleto siga al jugador si está en el rango
     public void seguirJugador(Player jugador) {
         int distancia = calcularDistanciaAlJugador(jugador);
 
         if (distancia <= rangoDeteccion && distancia > distanciaAtaque) {
-            enPatrullaje = false; // Desactivar patrullaje si detecta al jugador
+            enPatrullaje = false; 
 
             if (jugador.getX() > getX()) {
                 moviendoDerecha = true;
-                setLocation(getX() + velocidadX, getY());  // Mover hacia la derecha
+                setLocation(getX() + velocidadX, getY());  
                 animarUniversal(framesEsqueletoDerecha, 5);
             } else {
                 moviendoDerecha = false;
-                setLocation(getX() - velocidadX, getY());  // Mover hacia la izquierda
+                setLocation(getX() - velocidadX, getY()); 
                 animarUniversal(framesEsqueletoIzquierda, 5);
             }
         } else if (distancia <= distanciaAtaque) {
@@ -168,8 +158,8 @@ public class Esqueleto extends Entidad {
                 jugador.recibirDaño(10);  // El esqueleto inflige daño al jugador
             }
 
-            enAtaque = false;  // Termina el ataque
-            frameActual = 0;  // Reiniciar el contador de frames
+            enAtaque = false;  
+            frameActual = 0;  
         }
     }
 
@@ -183,7 +173,7 @@ public class Esqueleto extends Entidad {
         }
 
         if (frameActual >= framesMuerteDerecha.length || frameActual >= framesMuerteIzquierda.length) {
-            morir();  // Llamar al método morir al finalizar la animación
+            morir(); 
         }
     }
 
@@ -207,11 +197,17 @@ public class Esqueleto extends Entidad {
     @Override
     public void recibirDaño(int cantidad) {
         if (enMuerte) return;
-
+    
         vida -= cantidad;
         if (vida <= 0 && !enMuerte) {
             enMuerte = true;
             frameActual = 0;  // Reiniciar animación de muerte
+    
+            // Otorgar puntos al jugador cuando el Esqueleto muere
+            Fase1 mundo = (Fase1) getWorld();
+            if (mundo != null) {
+                mundo.aumentarPuntaje(10);  // Aumentar el puntaje en 10 puntos
+            }
         }
-    }
+    }   
 }

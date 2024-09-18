@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=ChampinonM
+comment1.params=puntoInicialX\ puntoFinalX
+comment1.target=ChampinonM(int,\ int)
+comment2.params=
+comment2.target=void\ actEntidad()
+comment3.params=jugador
+comment3.target=void\ atacarJugador(Player)
+comment4.params=jugador
+comment4.target=void\ animarAtaque(Player)
+comment5.params=
+comment5.target=void\ animarMuerte()
+comment6.params=cantidad
+comment6.target=void\ recibirDa\u00F1o(int)
+numComments=7

@@ -49,7 +49,6 @@ public class Boton extends Actor {
                 // Ir al menú principal
                 Greenfoot.setWorld(new MenuInicio());
             }
-            // Puedes agregar más acciones según sea necesario
         }
 
         // Animación de hover

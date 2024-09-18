@@ -7,13 +7,13 @@ public class OpcionesMenu extends World {
         
         // Agregar un botón de "Regresar"
         Boton regresarBoton = new Boton("Regresar");
-        addObject(regresarBoton, getWidth() / 2, 750);  // Colocar en la parte inferior
+        addObject(regresarBoton, getWidth() / 2, 750);  
     }
 
     // Método para verificar si el botón de regresar fue clickeado
     public void act() {
         if (Greenfoot.mouseClicked(getObjects(Boton.class).get(0))) {
-            Greenfoot.setWorld(new MenuInicio());  // Cambiar al menú principal
+            Greenfoot.setWorld(new MenuInicio());  
         }
     }
 }

@@ -60,8 +60,7 @@ public class Player extends Entidad {
     private int velocidadAnimMuerte = 8;  // **Velocidad de animación de muerte**
 
     public Player() {
-        super(30);  // Vida inicial
-
+        super(30, 100, 500);  // Vida inicial, punto inicial de patrullaje, y punto final de patrullaje (valores de ejemplo)
         // Cargar los spritesheets
         GreenfootImage spriteSheetCorrerDerecha = new GreenfootImage("player_run_derecha.png");
         GreenfootImage spriteSheetCorrerIzquierda = new GreenfootImage("player_run_izquierda.png");
@@ -99,20 +98,24 @@ public class Player extends Entidad {
         setImage(framesEstaticoDerecha[0]);
     }
 
-    // Método actEntidad() donde se implementa la lógica del jugador
     @Override
     protected void actEntidad() {
         if (enMuerte) {
-            animarMuerte();  // **Animar la muerte si está muriendo**
-            return;  // No realizar otras acciones
+            animarMuerte(); 
+            return;  
         }
 
         if (enAtaque) {
             gestionarAtaque();  // Gestionar la animación de ataque si está atacando
         } else {
-            mover();  // Mover solo si no está en ataque
-            //mostrarHitbox();  // Mostrar la hitbox de daño si es necesario
+            mover();  
         }
+        
+                // Comprobar si el jugador ha caído fuera del mundo (parte inferior)
+        if (getY() > getWorld().getHeight() - 50) {
+            morir();  
+        }
+
     }
 
     // **Método para animar la muerte**
@@ -125,7 +128,7 @@ public class Player extends Entidad {
         }
 
         if (frameActual >= framesMuerteDerecha.length || frameActual >= framesMuerteIzquierda.length) {
-            morir();  // Llamar al método morir al finalizar la animación
+            morir();  
         }
     }
 
@@ -144,18 +147,30 @@ public class Player extends Entidad {
     // Detectar colisiones con la hitbox de ataque
     public void detectarColisionAtaque() {
         Actor enemigo = null;
-
+    
         if (Movimientoanterior == MOV_DERECHA) {
             enemigo = getOneObjectAtOffset(40, 0, Esqueleto.class);
+            if (enemigo == null) {
+                enemigo = getOneObjectAtOffset(40, 0, ChampinonM.class);  // Agregar detección de ChampinonM
+            }
         } else if (Movimientoanterior == MOV_IZQUIERDA) {
             enemigo = getOneObjectAtOffset(-40, 0, Esqueleto.class);
+            if (enemigo == null) {
+                enemigo = getOneObjectAtOffset(-40, 0, ChampinonM.class);  // Agregar detección de ChampinonM
+            }
         }
-
-        if (enemigo != null && enemigo instanceof Esqueleto) {
-            Esqueleto esqueleto = (Esqueleto) enemigo;
-            esqueleto.recibirDaño(20);  // Infligir daño al Esqueleto
+    
+        if (enemigo != null) {
+            if (enemigo instanceof Esqueleto) {
+                Esqueleto esqueleto = (Esqueleto) enemigo;
+                esqueleto.recibirDaño(20);  // Infligir daño al Esqueleto
+            } else if (enemigo instanceof ChampinonM) {
+                ChampinonM champinon = (ChampinonM) enemigo;
+                champinon.recibirDaño(20);  // Infligir daño al ChampinonM
+            }
         }
     }
+
 
     // Realizar el ataque
     public void realizarAtaque() {
@@ -288,7 +303,6 @@ public class Player extends Entidad {
         return vida;
     }
 
-    @Override
     public void morir() {
         World world = getWorld();
         if (world instanceof Fase1) {

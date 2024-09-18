@@ -1,46 +1,39 @@
 import greenfoot.*;
 
 public class BarraDeVida extends Actor {
-    private GreenfootImage[] heartFrames;  // Arreglo para almacenar los frames de los corazones
-    private int maxHearts = 5;  // Número máximo de corazones
-    private int heartWidth = 96;  // Ancho de cada frame (corazón) en el sprite
-    private int heartHeight = 96;  // Alto de cada frame
-    private int currentHearts;  // Corazones actuales
-    private Player player;  // Referencia al jugador
+    private GreenfootImage[] heartFrames;  
+    private int heartWidth = 96;  
+    private int heartHeight = 96;  
+    private Player player;  
+    private int numFrames = 9;  
 
-    public BarraDeVida(Player player) {  // Constructor que recibe el jugador
-        this.player = player;
+    public BarraDeVida(Player player) {
+        this.player = player;  // Asignar el jugador
 
         // Cargar los frames desde el sprite
-        heartFrames = new GreenfootImage[9];  // 9 frames de corazones en total
-
+        heartFrames = new GreenfootImage[numFrames];
         GreenfootImage spriteSheet = new GreenfootImage("BarraDeVida.png");
-        for (int i = 0; i < 9; i++) {
+
+        // Extraer cada frame del sprite y agrandar el tamaño
+        for (int i = 0; i < numFrames; i++) {
             heartFrames[i] = new GreenfootImage(heartWidth, heartHeight);
-            heartFrames[i].drawImage(spriteSheet, -i * heartWidth, 0);  // Extraer cada frame del sprite
+            heartFrames[i].drawImage(spriteSheet, -i * heartWidth, 0);  // Extraer cada frame
+            heartFrames[i].scale(heartWidth * 5/3, heartHeight * 5/3);  // Escalar para agrandar el corazón
         }
 
-        currentHearts = maxHearts;  // Vida inicial igual a la cantidad máxima de corazones
-        actualizarBarra();  // Mostrar los corazones inicialmente
+        mostrarCorazon(player.getVida());  // Inicialmente mostrar el corazón completo
     }
 
     // Método para actualizar la barra de vida según la vida del jugador
     public void actualizarBarra() {
-        int vida = player.getVida();  // Obtener la vida del jugador
-        currentHearts = vida;  // Actualizar los corazones actuales basados en la vida del jugador
-        mostrarCorazones();
+        int vida = player.getVida();  
+        mostrarCorazon(vida);  
     }
 
-    // Método para mostrar los corazones en pantalla
-    private void mostrarCorazones() {
-        GreenfootImage image = new GreenfootImage(maxHearts * heartWidth, heartHeight);  // Crear imagen de la barra de vida
-        for (int i = 0; i < maxHearts; i++) {
-            if (i < currentHearts) {
-                image.drawImage(heartFrames[8], i * heartWidth, 0);  // Corazón lleno
-            } else {
-                image.drawImage(heartFrames[0], i * heartWidth, 0);  // Corazón vacío
-            }
-        }
-        setImage(image);  // Establecer la imagen actual de la barra de vida
+    // Mostrar el corazón animado en pantalla según la vida del jugador
+    private void mostrarCorazon(int vida) {
+        int vidaTotal = 30;  
+        int frameIndex = (vida * (numFrames - 1)) / vidaTotal;  
+        setImage(heartFrames[frameIndex]);  
     }
 }
